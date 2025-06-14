@@ -1,4 +1,4 @@
-module hello-world-api
+module logs-go
 
 go 1.24
 

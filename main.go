@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 
-	"hello-world-api/internal/api/handlers"
-	"hello-world-api/internal/config"
+	"logs-go/internal/api/handlers"
+	"logs-go/internal/config"
 )
 
 func main() {

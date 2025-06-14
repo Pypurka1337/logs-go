@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"hello-world-api/internal/config"
+	"logs-go/internal/config"
 	"net/http"
 	"time"
 
