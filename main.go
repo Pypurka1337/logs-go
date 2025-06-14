@@ -22,15 +22,15 @@ func main() {
 	}
 
 	// Создание маршрутизатора
-	r := handlers.SetupRouter(cfg)
+	router := handlers.SetupRouter(cfg)
 
 	// Создание HTTP сервера
-	addr := ":" + cfg.Port
-	fmt.Printf("Starting server on %s\n", addr)
+	address := ":" + cfg.Port
+	fmt.Printf("Starting server on %s\n", address)
 
-	srv := &http.Server{
-		Addr:         addr,
-		Handler:      r,
+	server := &http.Server{
+		Addr:         address,
+		Handler:      router,
 		ReadTimeout:  time.Duration(cfg.ReadTimeout) * time.Second,
 		WriteTimeout: time.Duration(cfg.WriteTimeout) * time.Second,
 		IdleTimeout:  time.Duration(cfg.IdleTimeout) * time.Second,
@@ -42,8 +42,8 @@ func main() {
 
 	// Запуск сервера в горутине
 	go func() {
-		fmt.Printf("Server is ready to accept connections on %s\n", addr)
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		fmt.Printf("Server is ready to accept connections on %s\n", address)
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			fmt.Printf("Error starting server: %v\n", err)
 			os.Exit(1)
 		}
@@ -58,7 +58,7 @@ func main() {
 	defer cancel()
 
 	// Graceful shutdown
-	if err := srv.Shutdown(ctx); err != nil {
+	if err := server.Shutdown(ctx); err != nil {
 		fmt.Printf("Error during server shutdown: %v\n", err)
 		os.Exit(1)
 	}
