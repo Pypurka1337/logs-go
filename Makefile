@@ -1,4 +1,4 @@
-.PHONY: up down build test test-coverage logs clean swagger
+.PHONY: up down build test test-coverage logs clean swagger sqlc migrate migrate-down migrate-create tools
 
 # Команды для Docker
 up:
@@ -20,6 +20,28 @@ dev:
 install:
 	go mod download
 	go mod tidy
+
+# Команды для работы с БД
+sqlc:
+	sqlc generate
+
+migrate:
+	migrate -path migrations -database "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable" up
+
+migrate-down:
+	migrate -path migrations -database "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable" down
+
+# Создание миграции (для Windows PowerShell)
+# Использование: make migrate-create name=my_migration
+migrate-create:
+	migrate create -ext sql -dir migrations -seq $(name)
+
+# Установка инструментов
+tools:
+	go install github.com/air-verse/air@latest
+	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+	go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+	go install github.com/swaggo/swag/cmd/swag@latest
 
 # Команды для тестирования
 test:

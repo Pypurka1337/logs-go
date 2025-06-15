@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS logs (
+    id SERIAL PRIMARY KEY,
+    model VARCHAR(255) NOT NULL,
+    user_uuid UUID NOT NULL,
+    user_name VARCHAR(255),
+    action VARCHAR(100) NOT NULL,
+    action_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+); 

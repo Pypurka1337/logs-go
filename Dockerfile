@@ -1,11 +1,24 @@
 FROM golang:1.24-alpine
 
+# Установка необходимых инструментов
+RUN apk add --no-cache make git
+
 WORKDIR /app
 
-RUN go install github.com/air-verse/air@latest
-
+# Копируем файлы для сборки
 COPY go.mod go.sum ./
-RUN go mod download && \
-go install github.com/swaggo/swag/cmd/swag@latest
+COPY Makefile ./
 
-CMD ["air", "-c", ".air.toml"]
+# Установка зависимостей и инструментов
+RUN make install && \
+    make tools
+
+# Копируем исходный код
+COPY . .
+
+# Генерация кода и документации
+#RUN make sqlc && \
+#    make swagger
+
+# Команда по умолчанию для разработки
+CMD ["air", "-c", ".air.toml"] 

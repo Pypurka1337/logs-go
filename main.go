@@ -12,6 +12,7 @@ import (
 	_ "logs-go/docs" // import generated documentation
 	"logs-go/internal/api/handlers"
 	"logs-go/internal/config"
+	"logs-go/internal/database"
 )
 
 // @title Logs Service API
@@ -23,6 +24,28 @@ func main() {
 	cfg, err := config.Load()
 	if err != nil {
 		fmt.Printf("Error loading config: %v\n", err)
+		os.Exit(1)
+	}
+
+	// Инициализация подключения к базе данных
+	dbConfig, err := config.NewDatabaseConfig()
+	if err != nil {
+		fmt.Printf("Error loading database config: %v\n", err)
+		os.Exit(1)
+	}
+
+	backgroundContext := context.Background()
+
+	pool, err := database.NewConnection(backgroundContext, dbConfig.ConnectionString())
+	if err != nil {
+		fmt.Printf("Error connecting to database: %v\n", err)
+		os.Exit(1)
+	}
+	defer pool.Close()
+
+	// Запуск миграций
+	if err := database.RunMigrations(dbConfig.ConnectionString(), "migrations"); err != nil {
+		fmt.Printf("Error running migrations: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -59,11 +82,11 @@ func main() {
 	fmt.Println("Shutting down server...")
 
 	// Создание контекста с таймаутом для graceful shutdown
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(cfg.ShutdownTimeout)*time.Second)
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), time.Duration(cfg.ShutdownTimeout)*time.Second)
 	defer cancel()
 
 	// Graceful shutdown
-	if err := server.Shutdown(ctx); err != nil {
+	if err := server.Shutdown(shutdownCtx); err != nil {
 		fmt.Printf("Error during server shutdown: %v\n", err)
 		os.Exit(1)
 	}
