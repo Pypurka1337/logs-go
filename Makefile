@@ -1,4 +1,4 @@
-.PHONY: up down build test test-coverage logs clean
+.PHONY: up down build test test-coverage logs clean swagger
 
 # Команды для Docker
 up:
@@ -28,6 +28,10 @@ test:
 test-coverage:
 	go test ./... -coverprofile=coverage.out
 	go tool cover -html=coverage.out -o coverage.html
+
+# Swagger документация
+swagger:
+	swag init
 
 # Очистка
 clean:
