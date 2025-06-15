@@ -25,9 +25,11 @@ install:
 sqlc:
 	sqlc generate
 
+# Todo Remove
 migrate:
 	migrate -path migrations -database "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable" up
 
+# Todo Remove
 migrate-down:
 	migrate -path migrations -database "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable" down
 
