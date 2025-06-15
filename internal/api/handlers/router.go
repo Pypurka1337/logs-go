@@ -9,6 +9,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/swaggo/http-swagger"
+	_ "logs-go/docs" // import generated documentation
 )
 
 func SetupRouter(cfg *config.Config) *chi.Mux {
@@ -30,6 +32,10 @@ func SetupRouter(cfg *config.Config) *chi.Mux {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.Timeout(time.Duration(cfg.WriteTimeout) * time.Second))
 
+	router.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("/swagger/doc.json"),
+	))
+
 	router.Route("/api", func(r chi.Router) {
 		r.Get("/health", healthHandler())
 	})
@@ -37,6 +43,14 @@ func SetupRouter(cfg *config.Config) *chi.Mux {
 	return router
 }
 
+// healthHandler godoc
+// @Summary Проверка здоровья сервиса
+// @Description Проверяет работоспособность сервиса
+// @Tags health
+// @Accept json
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Router /api/health [get]
 func healthHandler() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		writer.Header().Set("Content-Type", "application/json")

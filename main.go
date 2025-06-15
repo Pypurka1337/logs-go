@@ -9,10 +9,15 @@ import (
 	"syscall"
 	"time"
 
+	_ "logs-go/docs" // import generated documentation
 	"logs-go/internal/api/handlers"
 	"logs-go/internal/config"
 )
 
+// @title Logs Service API
+// @version 1.0
+// @description API для сервиса логов
+// @BasePath /api
 func main() {
 	// Загрузка конфигурации
 	cfg, err := config.Load()
