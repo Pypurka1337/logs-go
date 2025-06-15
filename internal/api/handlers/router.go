@@ -1,9 +1,8 @@
 package handlers
 
 import (
-	"encoding/json"
+	"logs-go/internal/api/handlers/health"
 	"logs-go/internal/config"
-	"net/http"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -37,26 +36,8 @@ func SetupRouter(cfg *config.Config) *chi.Mux {
 	))
 
 	router.Route("/api", func(r chi.Router) {
-		r.Get("/health", healthHandler())
+		r.Get("/health", health.Handler())
 	})
 
 	return router
-}
-
-// healthHandler godoc
-// @Summary Проверка здоровья сервиса
-// @Description Проверяет работоспособность сервиса
-// @Tags health
-// @Accept json
-// @Produce json
-// @Success 200 {object} map[string]string
-// @Router /api/health [get]
-func healthHandler() http.HandlerFunc {
-	return func(writer http.ResponseWriter, request *http.Request) {
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusOK)
-		json.NewEncoder(writer).Encode(map[string]string{
-			"status": "OK",
-		})
-	}
 }
